@@ -14,7 +14,7 @@ converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 
 # === Step 3: Save the TFLite model ===
-tflite_model_path = "Models/voice_model.tflite"
+tflite_model_path = "Models/offline_voice.tflite"
 with open(tflite_model_path, "wb") as f:
     f.write(tflite_model)
 
