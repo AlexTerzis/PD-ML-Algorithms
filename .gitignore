@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model files
+*.joblib
+*.keras
+*.h5
+*.tflite
+*.log
+
+# OS-specific
+.DS_Store
+
+# Datasets
+data/
+Data/
+*.csv
+*.data
