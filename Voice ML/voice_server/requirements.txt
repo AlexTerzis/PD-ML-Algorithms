@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+parselmouth
+nolds
+antropy
+joblib
+pandas
+scikit-learn
