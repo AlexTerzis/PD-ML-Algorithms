@@ -1,8 +1,8 @@
 fastapi
 uvicorn
-parselmouth
+pandas
+numpy
+joblib
+praat-parselmouth
 nolds
 antropy
-joblib
-pandas
-scikit-learn
