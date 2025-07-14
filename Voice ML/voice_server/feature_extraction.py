@@ -6,6 +6,8 @@ from parselmouth.praat import call
 import antropy
 
 from praat_extractor import extract_praat_voice_report
+import os
+os.environ["NUMBA_DISABLE_JIT"] = "1"
 
 
 def _rpde(periods, emb_dim=4, tol=0.12):
