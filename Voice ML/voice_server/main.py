@@ -136,6 +136,7 @@ async def predict(file: UploadFile = File(...)):
             {
                 "model_version": MODEL_VERSION,
                 "validated_for_clinical_use": VALIDATED_FOR_CLINICAL_USE,
+                "scoring_enabled": VALIDATED_FOR_CLINICAL_USE,
                 "result_status": assessment["status"],
                 "is_usable": assessment["usable"],
                 "screening_score": score,
@@ -158,7 +159,11 @@ async def predict(file: UploadFile = File(...)):
 @app.get("/model-info")
 async def model_info():
     """Expose the feature contract and honest validation summary."""
-    return METADATA
+    return {
+        **METADATA,
+        "scoring_enabled": VALIDATED_FOR_CLINICAL_USE,
+        "scoring_policy": "requires_independent_phone_validation",
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
