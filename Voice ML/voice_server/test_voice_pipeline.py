@@ -1,7 +1,13 @@
 import unittest
 
 from feature_schema import FEATURE_ORDER, MODEL_VERSION
-from main import METADATA, TRAIN_MEAN, TRAIN_STD, _input_assessment
+from main import (
+    METADATA,
+    TRAIN_MEAN,
+    TRAIN_STD,
+    _input_assessment,
+    _prediction_assessment,
+)
 from praat_extractor import parse_voice_report
 
 
@@ -22,6 +28,15 @@ class VoicePipelineTest(unittest.TestCase):
         assessment = _input_assessment(dict(TRAIN_MEAN), GOOD_QUALITY)
         self.assertTrue(assessment["usable"])
         self.assertEqual(assessment["status"], "ok")
+
+    def test_unvalidated_model_never_authorizes_a_patient_score(self):
+        assessment = _prediction_assessment(
+            dict(TRAIN_MEAN), GOOD_QUALITY
+        )
+        self.assertFalse(assessment["usable"])
+        self.assertEqual(
+            assessment["status"], "research_model_not_validated"
+        )
 
     def test_three_outlying_features_force_abstention(self):
         features = dict(TRAIN_MEAN)

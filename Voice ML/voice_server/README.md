@@ -9,7 +9,10 @@ The model uses 16 Praat features whose units can be reproduced at inference.
 Evaluation leaves one speaker out at a time so recordings from one person do
 not leak into both training and validation. Recordings that fail capture checks
 or fall outside the reference feature range receive an inconclusive response
-with no score.
+with no score. The current metadata also sets `validated_for_clinical_use` to
+`false`, so even an in-range recording cannot receive a patient-facing score.
+Scoring should only be enabled after independent validation on representative
+phone recordings.
 
 ## Retrain
 

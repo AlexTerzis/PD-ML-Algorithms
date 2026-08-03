@@ -41,6 +41,9 @@ if METADATA["feature_order"] != FEATURE_ORDER:
 TRAIN_MEAN = METADATA["training"]["feature_mean"]
 TRAIN_STD = METADATA["training"]["feature_std"]
 DECISION_THRESHOLD = METADATA["validation"]["decision_threshold"]
+VALIDATED_FOR_CLINICAL_USE = bool(
+    METADATA.get("validated_for_clinical_use", False)
+)
 
 app = FastAPI(title="Sustained-vowel research comparison service")
 
@@ -91,6 +94,20 @@ def _input_assessment(
     }
 
 
+def _prediction_assessment(
+    features: dict[str, float], quality: dict[str, float]
+) -> dict:
+    """Combine capture checks with the model's deployment authorization."""
+    assessment = _input_assessment(features, quality)
+    if assessment["usable"] and not VALIDATED_FOR_CLINICAL_USE:
+        assessment["status"] = "research_model_not_validated"
+        assessment["usable"] = False
+        assessment["warnings"].append(
+            "model_not_validated_for_phone_recordings"
+        )
+    return assessment
+
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     suffix = Path(file.filename or "voice.wav").suffix or ".wav"
@@ -106,7 +123,7 @@ async def predict(file: UploadFile = File(...)):
         if any(not _finite(value) for value in features.values()):
             raise ValueError("Feature extraction produced a non-finite value")
 
-        assessment = _input_assessment(features, quality)
+        assessment = _prediction_assessment(features, quality)
         score: float | None = None
         if assessment["usable"]:
             row = pd.DataFrame(
@@ -118,7 +135,7 @@ async def predict(file: UploadFile = File(...)):
         return JSONResponse(
             {
                 "model_version": MODEL_VERSION,
-                "validated_for_clinical_use": False,
+                "validated_for_clinical_use": VALIDATED_FOR_CLINICAL_USE,
                 "result_status": assessment["status"],
                 "is_usable": assessment["usable"],
                 "screening_score": score,
