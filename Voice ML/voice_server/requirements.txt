@@ -4,6 +4,4 @@ pandas
 scikit-learn
 joblib
 praat-parselmouth
-nolds
-antropy
 python-multipart

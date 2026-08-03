@@ -1,0 +1,117 @@
+{
+  "model_version": "praat16_subject_grouped_v2",
+  "validated_for_clinical_use": false,
+  "feature_order": [
+    "MDVP:Fo(Hz)",
+    "MDVP:Fhi(Hz)",
+    "MDVP:Flo(Hz)",
+    "MDVP:Jitter(%)",
+    "MDVP:Jitter(Abs)",
+    "MDVP:RAP",
+    "MDVP:PPQ",
+    "Jitter:DDP",
+    "MDVP:Shimmer",
+    "MDVP:Shimmer(dB)",
+    "Shimmer:APQ3",
+    "Shimmer:APQ5",
+    "MDVP:APQ",
+    "Shimmer:DDA",
+    "NHR",
+    "HNR"
+  ],
+  "training": {
+    "dataset": "UCI Parkinsons (id=174)",
+    "recordings": 195,
+    "subject_ids": 32,
+    "pd_recordings": 147,
+    "healthy_recordings": 48,
+    "feature_mean": {
+      "MDVP:Fo(Hz)": 154.22864102564102,
+      "MDVP:Fhi(Hz)": 197.10491794871797,
+      "MDVP:Flo(Hz)": 116.32463076923077,
+      "MDVP:Jitter(%)": 0.006220461538461538,
+      "MDVP:Jitter(Abs)": 4.395897435897436e-05,
+      "MDVP:RAP": 0.003306410256410257,
+      "MDVP:PPQ": 0.003446358974358974,
+      "Jitter:DDP": 0.009919948717948717,
+      "MDVP:Shimmer": 0.0297091282051282,
+      "MDVP:Shimmer(dB)": 0.2822512820512821,
+      "Shimmer:APQ3": 0.015664153846153845,
+      "Shimmer:APQ5": 0.017878256410256407,
+      "MDVP:APQ": 0.02408148717948718,
+      "Shimmer:DDA": 0.04699261538461539,
+      "NHR": 0.02484707692307692,
+      "HNR": 21.885974358974355
+    },
+    "feature_std": {
+      "MDVP:Fo(Hz)": 41.283799965906525,
+      "MDVP:Fhi(Hz)": 91.25665238831346,
+      "MDVP:Flo(Hz)": 43.40967637841882,
+      "MDVP:Jitter(%)": 0.004835686602250747,
+      "MDVP:Jitter(Abs)": 3.47325068897351e-05,
+      "MDVP:RAP": 0.00296015495711816,
+      "MDVP:PPQ": 0.002751893254928691,
+      "Jitter:DDP": 0.008880485924417673,
+      "MDVP:Shimmer": 0.018808518603560635,
+      "MDVP:Shimmer(dB)": 0.19437696243124433,
+      "Shimmer:APQ3": 0.01012709438557181,
+      "Shimmer:APQ5": 0.011992835897206745,
+      "MDVP:APQ": 0.016903227224669554,
+      "Shimmer:DDA": 0.030380918738842865,
+      "NHR": 0.04031467829869681,
+      "HNR": 4.414401569264757
+    }
+  },
+  "validation": {
+    "method": "leave_one_subject_out",
+    "unit": "recording",
+    "accuracy": 0.6051282051282051,
+    "balanced_accuracy": 0.5627125850340137,
+    "roc_auc": 0.721655328798186,
+    "brier_score": 0.22149027563738727,
+    "confusion_matrix": [
+      [
+        23,
+        25
+      ],
+      [
+        52,
+        95
+      ]
+    ],
+    "decision_threshold": 0.7,
+    "balanced_accuracy_at_decision_threshold": 0.678358843537415,
+    "confusion_matrix_at_decision_threshold": [
+      [
+        39,
+        9
+      ],
+      [
+        67,
+        80
+      ]
+    ],
+    "speaker_id_level": {
+      "speaker_ids": 32,
+      "aggregation": "mean_out_of_fold_score_per_speaker_id",
+      "accuracy_at_decision_threshold": 0.59375,
+      "balanced_accuracy_at_decision_threshold": 0.6458333333333333,
+      "roc_auc": 0.7291666666666667,
+      "confusion_matrix_at_decision_threshold": [
+        [
+          6,
+          2
+        ],
+        [
+          11,
+          13
+        ]
+      ]
+    }
+  },
+  "limitations": [
+    "Research comparison score; not a probability or diagnosis.",
+    "Small reference cohort with repeated recordings per speaker.",
+    "External smartphone validation has not been performed."
+  ]
+}

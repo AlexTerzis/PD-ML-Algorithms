@@ -1,11 +1,15 @@
 # praat_extractor.py
 
-import os, re
+import os
+import re
+
 import parselmouth
 from parselmouth import PraatError
 
 # Import the “call” helper directly
 from parselmouth.praat import call
+
+from feature_schema import PRAAT_PERCENT_FEATURES
 
 # Regexes for everything the GUI “Voice report…” spits out:
 # praat_extractor.py (just the VOICE_REPORT_REGEXES part)
@@ -29,6 +33,28 @@ VOICE_REPORT_REGEXES = {
     "NHR":                r"Mean noise-to-harmonics ratio:\s*([\d\.]+)",
     "HNR":                r"Mean harmonics-to-noise ratio:\s*([\d\.]+)\s*dB",
 }
+
+
+def parse_voice_report(report: str, source_name: str = "recording") -> dict:
+    """Parse a Praat report, failing closed if its format has changed."""
+    feats = {"file": source_name}
+    missing = []
+    for name, rx in VOICE_REPORT_REGEXES.items():
+        match = re.search(rx, report)
+        if match is None:
+            missing.append(name)
+            continue
+        value = float(match.group(1))
+        if name in PRAAT_PERCENT_FEATURES:
+            value /= 100.0
+        feats[name] = value
+
+    if missing:
+        raise RuntimeError(
+            "Praat Voice report did not contain required fields: "
+            + ", ".join(missing)
+        )
+    return feats
 
 
 def extract_praat_voice_report(wav_path: str) -> dict:
@@ -62,10 +88,6 @@ def extract_praat_voice_report(wav_path: str) -> dict:
     except PraatError as e:
         raise RuntimeError(f"Praat Voice report failed: {e!r}")
 
-    # 4) Parse out every single field with regex
-    feats = {"file": os.path.basename(wav_path)}
-    for name, rx in VOICE_REPORT_REGEXES.items():
-        m = re.search(rx, report)
-        feats[name] = float(m.group(1)) if m else 0.0
-
-    return feats
+    # 4) Parse every required field. Missing values are an extraction failure,
+    # never zero: a fabricated zero could create a confident-looking score.
+    return parse_voice_report(report, os.path.basename(wav_path))
