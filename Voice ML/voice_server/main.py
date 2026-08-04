@@ -108,6 +108,15 @@ def _prediction_assessment(
     return assessment
 
 
+def _experimental_model_score(features: dict[str, float]) -> float:
+    """Return the raw prototype output without giving it clinical meaning."""
+    row = pd.DataFrame(
+        [[features[name] for name in FEATURE_ORDER]],
+        columns=FEATURE_ORDER,
+    )
+    return float(MODEL.predict_proba(row)[0, 1])
+
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     suffix = Path(file.filename or "voice.wav").suffix or ".wav"
@@ -124,13 +133,10 @@ async def predict(file: UploadFile = File(...)):
             raise ValueError("Feature extraction produced a non-finite value")
 
         assessment = _prediction_assessment(features, quality)
-        score: float | None = None
-        if assessment["usable"]:
-            row = pd.DataFrame(
-                [[features[name] for name in FEATURE_ORDER]],
-                columns=FEATURE_ORDER,
-            )
-            score = float(MODEL.predict_proba(row)[0, 1])
+        experimental_score: float | None = None
+        if assessment["status"] != "capture_quality_failed":
+            experimental_score = _experimental_model_score(features)
+        score = experimental_score if assessment["usable"] else None
 
         return JSONResponse(
             {
@@ -143,6 +149,16 @@ async def predict(file: UploadFile = File(...)):
                 "decision_threshold": DECISION_THRESHOLD,
                 "above_research_threshold": (
                     score >= DECISION_THRESHOLD if score is not None else None
+                ),
+                "experimental_output_enabled": True,
+                "experimental_model_score": experimental_score,
+                "experimental_above_threshold": (
+                    experimental_score >= DECISION_THRESHOLD
+                    if experimental_score is not None
+                    else None
+                ),
+                "experimental_interpretation": (
+                    "prototype_pattern_output_not_probability_or_diagnosis"
                 ),
                 "interpretation": "research_voice_pattern_score_not_diagnosis",
                 "input_quality": assessment,
@@ -162,6 +178,7 @@ async def model_info():
     return {
         **METADATA,
         "scoring_enabled": VALIDATED_FOR_CLINICAL_USE,
+        "experimental_output_enabled": True,
         "scoring_policy": "requires_independent_phone_validation",
     }
 

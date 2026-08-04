@@ -6,6 +6,7 @@ from main import (
     TRAIN_MEAN,
     TRAIN_STD,
     _input_assessment,
+    _experimental_model_score,
     _prediction_assessment,
 )
 from praat_extractor import parse_voice_report
@@ -37,6 +38,11 @@ class VoicePipelineTest(unittest.TestCase):
         self.assertEqual(
             assessment["status"], "research_model_not_validated"
         )
+
+    def test_prototype_output_is_available_as_a_separate_number(self):
+        score = _experimental_model_score(dict(TRAIN_MEAN))
+        self.assertGreaterEqual(score, 0.0)
+        self.assertLessEqual(score, 1.0)
 
     def test_three_outlying_features_force_abstention(self):
         features = dict(TRAIN_MEAN)

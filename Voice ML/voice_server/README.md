@@ -14,6 +14,11 @@ with no score. The current metadata also sets `validated_for_clinical_use` to
 Scoring should only be enabled after independent validation on representative
 phone recordings.
 
+For prototype demonstrations, `/predict` exposes a separate
+`experimental_model_score`. It is the classifier's raw pattern output and must
+never be renamed to a probability, saved in patient history, or interpreted as
+a diagnosis. `screening_score` remains null while clinical scoring is disabled.
+
 ## Retrain
 
 From `voice_server`, using the repository virtual environment:
