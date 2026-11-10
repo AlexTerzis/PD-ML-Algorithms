@@ -15,4 +15,7 @@ tflite_model = converter.convert()
 with open("models/drawing_binary_classifier2.tflite", "wb") as f:
     f.write(tflite_model)
 
-print("✅ TFLite model converted and saved.")
+# Plain ASCII: the default Windows console code page cannot encode emoji, and
+# a UnicodeEncodeError here aborts the script with a confusing traceback even
+# though the model above was written successfully.
+print("[OK] TFLite model converted and saved.")
